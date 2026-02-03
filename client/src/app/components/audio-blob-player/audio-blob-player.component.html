@@ -1,0 +1,53 @@
+<div class="speech-player">
+  <div class="player-controls">
+    <button
+      class="play-pause-button"
+      [class.playing]="isPlaying()"
+      [class.paused]="isPaused()"
+      (click)="togglePlayPause()"
+      [disabled]="!audioBlob() || isLoading()"
+      type="button"
+      [attr.aria-label]="isPlaying() ? 'Pause' : 'Play'"
+    >
+      @if (isLoading()) {
+        <span class="spinner"></span>
+      } @else if (isPlaying()) {
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+        </svg>
+      } @else {
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      }
+    </button>
+
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progress()"></div>
+      </div>
+      <input
+        type="range"
+        class="progress-slider"
+        [value]="progress()"
+        [min]="0"
+        [max]="100"
+        step="0.1"
+        (input)="onSliderChange($event)"
+        [disabled]="!audioBlob()"
+      />
+    </div>
+
+    <button
+      class="stop-button"
+      (click)="stop()"
+      [disabled]="!isPlaying() && !isPaused()"
+      type="button"
+      aria-label="Stop"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6 6h12v12H6z" />
+      </svg>
+    </button>
+  </div>
+</div>

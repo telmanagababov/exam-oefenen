@@ -1,0 +1,13 @@
+{
+  "name": "exam-oefenen",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "concurrently --kill-others-on-fail --kill-others \"cd client && npm run start\" \"cd server && npm run dev\"",
+    "stop": "lsof -ti:4400,3000 | xargs kill -9 2>/dev/null || true",
+    "postinstall": "npm install --prefix client && npm install --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

@@ -1,0 +1,40 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div
+    class="modal-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="submit-modal-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-header">
+      <h2 id="submit-modal-title" class="modal-title">Examen inleveren?</h2>
+      <button type="button" class="modal-close" aria-label="Sluiten" (click)="onClose()">×</button>
+    </div>
+    <p class="modal-message">{{ message() }}</p>
+    @if (unansweredQuestions().length > 0) {
+      <div class="unanswered-questions">
+        <p class="unanswered-label">Niet beantwoorde vragen:</p>
+        <div class="question-boxes">
+          @for (questionIndex of unansweredQuestions(); track questionIndex) {
+            <button
+              type="button"
+              class="question-box"
+              (click)="onQuestionClick(questionIndex)"
+              [attr.aria-label]="'Ga naar vraag ' + (questionIndex + 1)"
+            >
+              {{ questionIndex + 1 }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+    <div class="modal-actions">
+      <button type="button" class="duo-button duo-button-secondary" (click)="onCancel()">
+        Ga terug
+      </button>
+      <button type="button" class="duo-button duo-button-primary" (click)="onConfirm()">
+        Voltooien
+      </button>
+    </div>
+  </div>
+</div>

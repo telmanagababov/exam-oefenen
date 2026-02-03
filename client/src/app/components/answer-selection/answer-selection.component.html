@@ -1,0 +1,19 @@
+<div class="answer-selection">
+  <h3 class="answer-title">{{ question()?.title }}</h3>
+  @if (question() && (question()!.answers ?? []).length > 0) {
+    <div class="answers-list">
+      @for (answer of question()!.answers; track $index) {
+        <button
+          type="button"
+          class="answer-button"
+          [class.selected]="selectedIndex() === $index"
+          (click)="onAnswerSelect($index)"
+        >
+          {{ answer }}
+        </button>
+      }
+    </div>
+  } @else {
+    <p class="no-answers">Geen antwoorden beschikbaar</p>
+  }
+</div>

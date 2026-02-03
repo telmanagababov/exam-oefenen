@@ -1,0 +1,136 @@
+<div class="exercise-results-container">
+  <h1 class="mb-4">Resultaten Overzicht</h1>
+
+  @if (isValidating()) {
+    <div class="loading-container">
+      <div class="loader"></div>
+      <p>Antwoorden worden gevalideerd...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-container">
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Fout bij het valideren van antwoorden</h4>
+        <p>{{ error() }}</p>
+        <hr />
+        <p class="mb-0">
+          <button type="button" class="btn btn-primary" (click)="retryValidation()">
+            Opnieuw proberen
+          </button>
+        </p>
+      </div>
+    </div>
+  } @else if (normalizedResult()) {
+    @let result = normalizedResult()!;
+    <!-- Exam Results Overview Section -->
+    <div class="card overview-card">
+      <div class="card-body">
+        <h2 class="card-title h4 mb-3">Examen Resultaten</h2>
+        <div class="d-flex align-items-center gap-3 mb-3">
+          @if (result.passed) {
+            <span class="badge bg-success fs-6">Geslaagd</span>
+          } @else {
+            <span class="badge bg-danger fs-6">Niet Geslaagd</span>
+          }
+        </div>
+        <div class="mb-2">
+          @if (result.isMultipleChoiceType) {
+            <p class="mb-0">
+              <strong>{{ result.correct }}</strong> van
+              <strong>{{ result.totalCount }}</strong> vragen correct beantwoord
+            </p>
+          } @else {
+            <p class="mb-0">
+              Gemiddelde score: <strong>{{ result.averageScore?.toFixed(1) ?? 'N/A' }}</strong> / 10
+            </p>
+            <p class="mb-0 text-muted">
+              Totaal aantal taken: <strong>{{ result.totalCount }}</strong>
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Answer Reviews Section -->
+    <div class="answers-section">
+      <h2 class="section-title h4 mb-4">Antwoord Beoordelingen</h2>
+      <div class="answers-grid">
+        @for (answer of result.answers; track $index) {
+          <div class="card answer-card">
+            <div class="card-body">
+              <!-- Icon and Title on same line (clickable) -->
+              <div
+                class="answer-header"
+                (click)="toggleAnswer($index)"
+                role="button"
+                [attr.aria-expanded]="isAnswerExpanded($index)"
+                tabindex="0"
+                (keydown.enter)="toggleAnswer($index)"
+                (keydown.space)="toggleAnswer($index); $event.preventDefault()"
+              >
+                <div class="d-flex align-items-center gap-2">
+                  <div
+                    class="answer-icon flex-shrink-0"
+                    [class.answer-icon--correct]="answer.correct"
+                    [class.answer-icon--wrong]="!answer.correct"
+                  ></div>
+                  <h5 class="mb-0 answer-title flex-grow-1">
+                    @if (questions()[$index]) {
+                      {{ questions()[$index].title }}
+                    } @else {
+                      Vraag {{ $index + 1 }}
+                    }
+                  </h5>
+                  <span class="expand-icon" [class.expanded]="isAnswerExpanded($index)"> ▼ </span>
+                </div>
+              </div>
+
+              <!-- Score -->
+              @if (answer.score !== undefined) {
+                <div class="mt-2">
+                  <span class="badge bg-info">Score: {{ answer.score }}/10</span>
+                </div>
+              }
+
+              <!-- Collapsible content -->
+              @if (isAnswerExpanded($index)) {
+                <div class="collapsible-content">
+                  <!-- Original Question Section -->
+                  @if (questions()[$index]?.question) {
+                    <div class="detail-section mb-3">
+                      <h6 class="detail-section-title">Originele vraag</h6>
+                      <p class="detail-section-content">{{ questions()[$index].question }}</p>
+                    </div>
+                  }
+
+                  <!-- Transcription Section -->
+                  @if (questions()[$index]?.transcription) {
+                    <div class="detail-section mb-3">
+                      <h6 class="detail-section-title">Transcriptie</h6>
+                      <p class="detail-section-content">{{ questions()[$index].transcription }}</p>
+                    </div>
+                  }
+
+                  <!-- User Answer Section -->
+                  <div class="detail-section mb-3">
+                    <h6 class="detail-section-title">Jouw antwoord</h6>
+                    @if (isAnswerBlob($index)) {
+                      <app-audio-blob-player [audioBlob]="getUserAnswerBlob($index)" />
+                    } @else {
+                      <p class="detail-section-content">{{ getUserAnswer($index) }}</p>
+                    }
+                  </div>
+
+                  <!-- Feedback Section -->
+                  <div class="detail-section">
+                    <h6 class="detail-section-title">Feedback</h6>
+                    <p class="detail-section-content text-muted">{{ answer.feedback }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

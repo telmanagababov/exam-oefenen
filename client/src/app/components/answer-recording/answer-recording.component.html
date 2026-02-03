@@ -1,0 +1,60 @@
+<div class="answer-recording">
+  <h3 class="answer-title">{{ question()?.title }}</h3>
+
+  @if (!isSupported()) {
+    <div class="error-message">
+      <p>Opname wordt niet ondersteund in deze browser. Gebruik Chrome, Edge of Safari.</p>
+    </div>
+  } @else {
+    @if (speechRecognitionError()) {
+      <div class="warning-message">
+        <p>
+          <strong>Waarschuwing:</strong> Spraakherkenning werkt niet (netwerkprobleem).
+          Audio-opname werkt nog steeds, maar tekstherkenning is niet beschikbaar.
+        </p>
+      </div>
+    }
+
+    <div class="recording-controls">
+      <button
+        type="button"
+        class="record-button"
+        [class.recording]="isRecording()"
+        [disabled]="isRecording()"
+        (click)="onStartRecording()"
+      >
+        @if (isRecording()) {
+          <span class="recording-indicator"></span>
+          Opnemen...
+        } @else {
+          Start Opname
+        }
+      </button>
+
+      @if (isRecording()) {
+        <button type="button" class="stop-button" (click)="onStopRecording()">
+          Stop Opname
+        </button>
+      }
+    </div>
+
+    <div class="transcription-box">
+      <label for="transcription" class="transcription-label"> Herkende tekst: </label>
+      <textarea
+        id="transcription"
+        class="transcription-textarea"
+        [value]="transcription()"
+        [readonly]="isRecording()"
+        (input)="onTranscriptionChange($event)"
+        rows="4"
+        [disabled]="!speechRecognitionError()"
+      ></textarea>
+    </div>
+
+    @if (recordedAudioBlob()) {
+      <div class="audio-blob-player-wrapper">
+        <app-audio-blob-player [audioBlob]="recordedAudioBlob()" />
+      </div>
+    }
+  }
+</div>

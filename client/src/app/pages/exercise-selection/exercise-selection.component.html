@@ -1,0 +1,17 @@
+<div class="exercise-selection-container">
+  <h1>Kies een examen</h1>
+  <p class="subtitle">Selecteer een examen type om te oefenen</p>
+
+  <div class="exercises-grid">
+    @for (exercise of exercises; track exercise.type) {
+      <div
+        class="duo-card exercise-card"
+        [class.selected]="selectedExerciseType() === exercise.type"
+        (click)="onExerciseClick(exercise.type)"
+      >
+        <h2>{{ exercise.name }}</h2>
+        <p>{{ exercise.description }}</p>
+      </div>
+    }
+  </div>
+</div>

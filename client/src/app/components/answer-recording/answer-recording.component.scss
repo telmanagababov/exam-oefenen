@@ -1,0 +1,163 @@
+.answer-recording {
+  padding: 1.5rem;
+}
+
+.answer-title {
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: #0b4263;
+  margin: 0 0 1.5rem 0;
+}
+
+.recording-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.record-button,
+.stop-button {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #01689b;
+  border-radius: 4px;
+  background-color: white;
+  color: #01689b;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.record-button:hover:not(:disabled),
+.stop-button:hover:not(:disabled) {
+  background-color: #01689b;
+  color: white;
+}
+
+.record-button:disabled,
+.stop-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.record-button.recording {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.stop-button {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.stop-button:hover {
+  background-color: #c82333;
+  border-color: #c82333;
+}
+
+.recording-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.transcription-box {
+  margin-top: 1rem;
+}
+
+.audio-blob-player-wrapper {
+  margin-top: 0.75rem;
+
+  ::ng-deep .speech-player {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+  }
+
+  ::ng-deep .play-pause-button,
+  ::ng-deep .stop-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  ::ng-deep .play-pause-button svg,
+  ::ng-deep .stop-button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  ::ng-deep .player-controls {
+    gap: 0.5rem;
+  }
+}
+
+.transcription-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.transcription-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.transcription-textarea:focus {
+  outline: none;
+  border-color: #01689b;
+  box-shadow: 0 0 0 2px rgba(1, 104, 155, 0.1);
+}
+
+.transcription-textarea::placeholder {
+  color: #999;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.error-message {
+  padding: 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  color: #856404;
+  margin-bottom: 1rem;
+}
+
+.error-message p {
+  margin: 0;
+}
+
+.warning-message {
+  padding: 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  color: #856404;
+  margin-bottom: 1rem;
+}
+
+.warning-message p {
+  margin: 0;
+}

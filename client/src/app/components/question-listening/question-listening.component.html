@@ -1,0 +1,23 @@
+<div class="question-listening">
+  <h3 class="question-title">{{ question()?.title }}</h3>
+  @if (question()?.context) {
+    <div class="context-text">{{ question()!.context }}</div>
+  }
+  @if (question()?.transcription) {
+    <app-speech-player [text]="question()!.transcription!" [voice]="selectedVoice()">
+    </app-speech-player>
+  }
+  <div class="voice-selector">
+    <label for="voice-select">Stem:</label>
+    <select
+      id="voice-select"
+      class="voice-dropdown"
+      [value]="selectedVoice()?.name || ''"
+      (change)="onVoiceChange($event)"
+    >
+      @for (voice of availableVoices(); track voice.name) {
+        <option [value]="voice.name">{{ voice.name }}</option>
+      }
+    </select>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<div class="answer-writing">
+  <h3 class="answer-title">{{ question()?.title }}</h3>
+
+  <div class="writing-box">
+    <label for="answer-text" class="writing-label"> Je antwoord: </label>
+    <textarea
+      id="answer-text"
+      class="writing-textarea"
+      [value]="answerText()"
+      (input)="onAnswerChange($event)"
+      placeholder="Typ hier je antwoord..."
+      rows="8"
+    ></textarea>
+  </div>
+</div>

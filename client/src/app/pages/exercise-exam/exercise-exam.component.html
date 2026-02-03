@@ -1,0 +1,63 @@
+<div class="exam-container">
+  @if (isLoading()) {
+    <div class="loader-container">
+      <div class="loader"></div>
+      <p>Examen wordt geladen...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-container">
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Fout bij het laden van het examen</h4>
+        <p>{{ error() }}</p>
+        <hr />
+        <p class="mb-0">
+          <button type="button" class="btn btn-primary" (click)="retryLoadExam()">
+            Opnieuw proberen
+          </button>
+        </p>
+      </div>
+    </div>
+  } @else if (examData(); as examData) {
+    @if (examData.exercises) {
+      <div class="exam-content">
+        <div class="exam-column">
+          @switch (selectedExerciseType()) {
+            @case (ExerciseType.LISTENING) {
+              <app-question-listening [question]="currentQuestion()"></app-question-listening>
+            }
+            @default {
+              <app-question-reading [question]="currentQuestion()"></app-question-reading>
+            }
+          }
+        </div>
+        <div class="exam-column">
+          <div class="exam-column-right">
+            @switch (selectedExerciseType()) {
+              @case (ExerciseType.SPEAKING) {
+                <app-answer-recording
+                  [question]="currentQuestion()"
+                  [initialAnswer]="currentAnswer()"
+                  (answerRecorded)="onAnswerRecorded($event)"
+                ></app-answer-recording>
+              }
+              @case (ExerciseType.WRITING) {
+                <app-answer-writing
+                  [question]="currentQuestion()"
+                  [initialAnswer]="currentAnswer()"
+                  (answerWritten)="onAnswerWritten($event)"
+                ></app-answer-writing>
+              }
+              @default {
+                <app-answer-selection
+                  [question]="currentQuestion()"
+                  [initialAnswer]="currentAnswer()"
+                  (answerSelected)="onAnswerSelected($event)"
+                ></app-answer-selection>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

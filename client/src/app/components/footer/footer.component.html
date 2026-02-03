@@ -1,0 +1,58 @@
+<footer class="duo-footer">
+  <div class="footer-container">
+    @if (isSelectionStep()) {
+      <div class="footer-content footer-selection">
+        <button
+          class="duo-button start-button"
+          [disabled]="!selectedExerciseType()"
+          (click)="onStart()"
+        >
+          START <span>></span>
+        </button>
+      </div>
+    } @else if (isExamStep()) {
+      <div class="footer-content footer-exam">
+        <button
+          class="duo-button prev-button"
+          [disabled]="isDisabled() || isFirstQuestion()"
+          (click)="onPrevious()"
+        >
+          <span><</span> VORIGE
+        </button>
+        @if (!hasError() && !isLoading()) {
+          <span> {{ currentQuestionIndex() + 1 }} van {{ totalQuestions() }} </span>
+        }
+        @if (isLastQuestion()) {
+          <button
+            class="duo-button next-button"
+            [disabled]="isDisabled()"
+            (click)="showSubmitModal.set(true)"
+          >
+            INLEVEREN <span>></span>
+          </button>
+        } @else {
+          <button class="duo-button next-button" [disabled]="isDisabled()" (click)="onNext()">
+            VOLGENDE <span>></span>
+          </button>
+        }
+      </div>
+    } @else if (isReviewStep()) {
+      <div class="footer-content footer-review">
+        <button class="duo-button close-button" (click)="onClose()">
+          <span><</span> AFSLUITEN
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (showSubmitModal()) {
+    <app-submit-confirmation-modal
+      [totalQuestions]="totalQuestions()"
+      [answeredCount]="answeredCount()"
+      [answers]="answers()"
+      (cancel)="onModalCancel()"
+      (confirm)="onModalConfirm()"
+      (questionClick)="onQuestionClick($event)"
+    />
+  }
+</footer>

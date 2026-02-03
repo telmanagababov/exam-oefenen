@@ -1,0 +1,7 @@
+Client:
+- Always use Angular Signals for state. 
+- Use Bootstrap 5 classes for layout.
+- Keep components small and modular.
+
+Server:
+- Backend should use Express with ESM.

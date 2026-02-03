@@ -1,0 +1,18 @@
+<header class="duo-header">
+  <div class="header-container">
+    @if (showTimer()) {
+      <div class="timer-wrapper">
+        <div class="timer">
+          <span>{{ formattedTimeLeft() }}</span>
+        </div>
+        @if (showTimeWarning()) {
+          <div class="time-warning-popup">De tijd is bijna om!</div>
+        }
+      </div>
+    } @else {
+      <a (click)="onLogoClick()" class="logo" style="cursor: pointer">
+        <h1>Oefenen</h1>
+      </a>
+    }
+  </div>
+</header>
