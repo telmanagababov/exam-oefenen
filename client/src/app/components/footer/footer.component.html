@@ -55,4 +55,8 @@
       (questionClick)="onQuestionClick($event)"
     />
   }
+
+  @if (showConfigModal()) {
+    <app-gemini-config-modal (close)="onConfigModalClose()" (save)="onConfigModalSave()" />
+  }
 </footer>

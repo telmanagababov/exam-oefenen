@@ -28,19 +28,19 @@ export type {
 /**
  * Configuration for the AI service
  */
-const getApiKey = (): string => {
-  const apiKey = process.env.GEMINI_API_KEY;
+const getApiKey = (providedKey?: string): string => {
+  const apiKey = providedKey || process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error("GEMINI_API_KEY environment variable is not set");
+    throw new Error("GEMINI_API_KEY is not provided and not set in environment");
   }
   return apiKey;
 };
 
 /**
- * Get the model name from environment variable, defaulting to gemini-2.5-flash
+ * Get the model name from provided parameter or environment variable, defaulting to gemini-2.5-flash
  */
-const getModelName = (): string => {
-  return process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const getModelName = (providedModel?: string): string => {
+  return providedModel || process.env.GEMINI_MODEL || "gemini-2.5-flash";
 };
 
 /**
@@ -48,10 +48,16 @@ const getModelName = (): string => {
  */
 let genAI: GoogleGenerativeAI | null = null;
 
-const initializeAI = (): GoogleGenerativeAI => {
+const initializeAI = (apiKey?: string): GoogleGenerativeAI => {
+  // Always create a new instance if apiKey is provided (for per-request config)
+  if (apiKey) {
+    return new GoogleGenerativeAI(apiKey);
+  }
+  
+  // Otherwise use cached instance
   if (!genAI) {
-    const apiKey = getApiKey();
-    genAI = new GoogleGenerativeAI(apiKey);
+    const key = getApiKey();
+    genAI = new GoogleGenerativeAI(key);
   }
   return genAI;
 };
@@ -59,11 +65,11 @@ const initializeAI = (): GoogleGenerativeAI => {
 /**
  * Get the generative model instance with a custom system instruction
  */
-const getModel = (systemInstruction?: string) => {
-  const ai = initializeAI();
-  const modelName = getModelName();
+const getModel = (systemInstruction?: string, apiKey?: string, modelName?: string) => {
+  const ai = initializeAI(apiKey);
+  const model = getModelName(modelName);
   return ai.getGenerativeModel({
-    model: modelName,
+    model,
     systemInstruction: systemInstruction || SYSTEM_INSTRUCTION,
   });
 };
@@ -157,10 +163,14 @@ const getExerciseResponseSchema = (examType?: ExamType): ResponseSchema => {
 /**
  * Generate exam exercises for a specific exam type
  * @param examType - The type of exam (Reading, Listening, Writing, Speaking, KNM)
+ * @param apiKey - Optional API key (overrides environment variable)
+ * @param modelName - Optional model name (overrides environment variable)
  * @returns Promise containing an object with an array of questions with optional answers and correct answer index
  */
 export const generateExamExercises = async (
-  examType: ExamType
+  examType: ExamType,
+  apiKey?: string,
+  modelName?: string
 ): Promise<ExerciseResponse> => {
   if (!Object.values(EXAM_TYPES).includes(examType)) {
     throw new Error(
@@ -176,7 +186,7 @@ export const generateExamExercises = async (
   // Combine base system instruction with exam-specific rules
   const enhancedSystemInstruction = `${SYSTEM_INSTRUCTION}\n\n${ruleContent}`;
 
-  const model = getModel(enhancedSystemInstruction);
+  const model = getModel(enhancedSystemInstruction, apiKey, modelName);
 
   const prompt = `Generate exam exercises for the ${examType} section of the Dutch Inburgeringsexamen (A2 level). 
 Follow the rules and structure specified in the system instructions exactly.
@@ -333,12 +343,16 @@ export interface UserAnswers {
  * @param examType - The type of exam (Reading, Listening, Writing, Speaking, KNM)
  * @param exercises - The original exercise questions
  * @param userAnswers - The user's answers
+ * @param apiKey - Optional API key (overrides environment variable)
+ * @param modelName - Optional model name (overrides environment variable)
  * @returns Promise containing validation results with feedback
  */
 export const validateExam = async (
   examType: ExamType,
   exercises: ExerciseResponse,
-  userAnswers: UserAnswers
+  userAnswers: UserAnswers,
+  apiKey?: string,
+  modelName?: string
 ): Promise<ValidationResponse> => {
   if (!Object.values(EXAM_TYPES).includes(examType)) {
     throw new Error(
@@ -354,7 +368,7 @@ export const validateExam = async (
   // Combine base system instruction with validation rules
   const validationSystemInstruction = `${SYSTEM_INSTRUCTION}\n\n${validationRuleContent}`;
 
-  const model = getModel(validationSystemInstruction);
+  const model = getModel(validationSystemInstruction, apiKey, modelName);
 
   // Determine if this is an open-ended exam (Writing/Speaking)
   const isOpenEnded =

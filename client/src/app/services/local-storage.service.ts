@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
  */
 export const LOCAL_STORAGE_KEYS = {
   SELECTED_VOICE_NAME: 'selected-voice-name',
+  GEMINI_CONFIG: 'gemini-config',
 } as const;
 
 @Injectable({

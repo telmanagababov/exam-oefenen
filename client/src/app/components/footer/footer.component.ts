@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { GeminiConfigService } from '../../services/gemini-config.service';
 import { NavigationService } from '../../services/navigation.service';
 import {
   clearCurrentStep,
@@ -21,18 +22,20 @@ import {
   selectSelectedExerciseType,
   setCurrentQuestionIndex,
 } from '../../store/exercise';
+import { GeminiConfigModalComponent } from '../gemini-config-modal/gemini-config-modal.component';
 import { SubmitConfirmationModalComponent } from '../submit-confirmation-modal/submit-confirmation-modal.component';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, SubmitConfirmationModalComponent],
+  imports: [CommonModule, SubmitConfirmationModalComponent, GeminiConfigModalComponent],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
 })
 export class FooterComponent {
   #store = inject(Store);
   #navigationService = inject(NavigationService);
+  #configService = inject(GeminiConfigService);
 
   currentStep = this.#store.selectSignal(selectCurrentStep);
   isSelectionStep = this.#store.selectSignal(selectIsSelectionStep);
@@ -55,6 +58,7 @@ export class FooterComponent {
   isDisabled = computed(() => this.isLoading() || this.hasError());
 
   showSubmitModal = signal(false);
+  showConfigModal = signal(false);
 
   onPrevious(): void {
     const currentIndex = this.currentQuestionIndex();
@@ -87,9 +91,29 @@ export class FooterComponent {
 
   onStart(): void {
     const exerciseType = this.selectedExerciseType();
-    if (exerciseType) {
-      this.#navigationService.navigateToExam(exerciseType);
+    if (!exerciseType) {
+      return;
     }
+
+    // Check if config is ready
+    if (!this.#configService.canProceed()) {
+      // Show config modal if neither local nor server config is available
+      this.showConfigModal.set(true);
+      return;
+    }
+
+    // Config is ready, proceed with navigation
+    this.#navigationService.navigateToExam(exerciseType);
+  }
+
+  onConfigModalClose(): void {
+    this.showConfigModal.set(false);
+  }
+
+  onConfigModalSave(): void {
+    this.showConfigModal.set(false);
+    // After saving config, try to start the exam again
+    this.onStart();
   }
 
   onClose(): void {

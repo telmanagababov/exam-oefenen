@@ -21,6 +21,8 @@ import {
   selectTimeLeft,
   setTimeLeft,
 } from '../../store/exercise';
+import { getCurrentUrlSignal } from '../../utils/router.utils';
+import { GeminiConfigModalComponent } from '../gemini-config-modal/gemini-config-modal.component';
 
 /** Seconds below which the timer shows "X sec" instead of "X min", and when the time-up warning is shown. */
 const TIMER_SECONDS_THRESHOLD = 100;
@@ -31,7 +33,7 @@ const TIMER_WARNING_DISPLAY_MS = 3000;
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, GeminiConfigModalComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -41,6 +43,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   #injector = inject(Injector);
 
   routeNames = RouteName;
+
+  // Reactive URL signal from router utils
+  currentUrl = getCurrentUrlSignal();
 
   isExamStep = this.#store.selectSignal(selectIsExamStep);
   isLoading = this.#store.selectSignal(selectIsLoading);
@@ -52,6 +57,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
   showTimer = computed(() => this.isExamStep() && !this.isLoading() && !this.error());
   #timerInterval?: number;
   #timeWarningTimeout?: ReturnType<typeof setTimeout>;
+
+  // Config modal
+  showConfigModal = signal(false);
+
+  // Reactive check for selection page based on current URL signal
+  isSelectionPage = computed(() => this.currentUrl().includes(RouteName.EXERCISE_SELECTION));
+
+  showSettingsButton = computed(() => !this.showTimer() && this.isSelectionPage());
 
   ngOnInit(): void {
     runInInjectionContext(this.#injector, () => {
@@ -133,5 +146,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onLogoClick(): void {
     this.#navigationService.navigateToSelection();
+  }
+
+  onSettingsClick(): void {
+    this.showConfigModal.set(true);
+  }
+
+  onConfigModalClose(): void {
+    this.showConfigModal.set(false);
+  }
+
+  onConfigModalSave(): void {
+    this.showConfigModal.set(false);
   }
 }

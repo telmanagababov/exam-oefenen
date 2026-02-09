@@ -1,10 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { API_URL } from '../config/api.config';
 import { GenerateExamResponse } from '../models/exam-response';
 import { ValidateExamResponse } from '../models/validation-response';
 import { AnswerValue } from '../store/exercise/exercise.state';
+import { GeminiConfigService } from './gemini-config.service';
 import { VoiceRecordingUtilityService } from './voice-recording-utility.service';
 
 interface AnswerPayload {
@@ -20,13 +22,35 @@ interface AnswerPayload {
 export class ExamService {
   private http = inject(HttpClient);
   private voiceRecordingUtilityService = inject(VoiceRecordingUtilityService);
-  private readonly apiUrl = 'http://localhost:3000/api';
+  private configService = inject(GeminiConfigService);
+  private readonly apiUrl = inject(API_URL);
+
+  /**
+   * Get HTTP headers with Gemini config if available
+   */
+  private getHeaders(): HttpHeaders {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    const config = this.configService.getConfig();
+    if (config.apiKey) {
+      headers = headers.set('X-Gemini-API-Key', config.apiKey);
+    }
+    if (config.model) {
+      headers = headers.set('X-Gemini-Model', config.model);
+    }
+
+    return headers;
+  }
 
   /**
    * Generate exam exercises for the given type
    */
   generateExam(examType: string): Observable<GenerateExamResponse> {
-    return this.http.get<GenerateExamResponse>(`${this.apiUrl}/exam/generate/${examType}`);
+    return this.http.get<GenerateExamResponse>(`${this.apiUrl}/exam/generate/${examType}`, {
+      headers: this.getHeaders(),
+    });
   }
 
   /**
@@ -64,9 +88,15 @@ export class ExamService {
   validateExam(examId: string, answers: AnswerValue[]): Observable<ValidateExamResponse> {
     return from(this.convertAnswersToPayload(answers)).pipe(
       switchMap((payload) => {
-        return this.http.post<ValidateExamResponse>(`${this.apiUrl}/exam/${examId}/validate`, {
-          answers: payload,
-        });
+        return this.http.post<ValidateExamResponse>(
+          `${this.apiUrl}/exam/${examId}/validate`,
+          {
+            answers: payload,
+          },
+          {
+            headers: this.getHeaders(),
+          },
+        );
       }),
     );
   }

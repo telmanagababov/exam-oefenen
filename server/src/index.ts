@@ -13,6 +13,7 @@ config({ path: resolve(__dirname, "..", "..", ".env") });
 import { EXAM_TYPES, ExamType } from "./models/exam-types.js";
 import { generateExamExercises, validateExam } from "./services/ai-service.js";
 import { exerciseStore } from "./stores/exercise-store.js";
+import { extractGeminiConfig } from "./utils/header-utils.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,10 +28,24 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
+// Config check endpoint - check if server has API key configured
+app.get("/api/config/check", (_req, res) => {
+  const hasApiKey = !!process.env.GEMINI_API_KEY;
+  const model = process.env.GEMINI_MODEL;
+  
+  res.json({
+    hasApiKey,
+    ...(hasApiKey && model ? { model } : {}),
+  });
+});
+
 // Generate exam exercises endpoint
 app.get("/api/exam/generate/:type", async (req, res) => {
   try {
     const { type } = req.params;
+
+    // Extract API config from headers (fallback to env)
+    const { apiKey, model } = extractGeminiConfig(req);
 
     // Validate exam type
     if (!Object.values(EXAM_TYPES).includes(type as ExamType)) {
@@ -42,8 +57,12 @@ app.get("/api/exam/generate/:type", async (req, res) => {
       });
     }
 
-    // Generate exercises
-    const exercises = await generateExamExercises(type as ExamType);
+    // Generate exercises (pass config to AI service)
+    const exercises = await generateExamExercises(
+      type as ExamType,
+      apiKey,
+      model
+    );
 
     // Generate unique ID for this exercise set
     const exerciseId = randomUUID();
@@ -81,6 +100,9 @@ app.post("/api/exam/:id/validate", async (req, res) => {
       }>;
     };
 
+    // Extract API config from headers (fallback to env)
+    const { apiKey, model } = extractGeminiConfig(req);
+
     // Validate that answers are provided
     if (!answers || !Array.isArray(answers)) {
       return res.status(400).json({
@@ -99,11 +121,13 @@ app.post("/api/exam/:id/validate", async (req, res) => {
       });
     }
 
-    // Validate the exam using AI
+    // Validate the exam using AI (pass config)
     const validation = await validateExam(
       exerciseData.examType,
       exerciseData.exercises,
-      { answers }
+      { answers },
+      apiKey,
+      model
     );
 
     // Return comprehensive validation response
