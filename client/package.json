@@ -4,6 +4,8 @@
   "scripts": {
     "start": "ng serve --port 4400",
     "build": "ng build",
+    "build:dev": "ng build --configuration development",
+    "build:prod": "ng build --configuration production",
     "test": "ng test",
     "format": "prettier --write \"src/**/*.{ts,html,scss,css,json}\""
   },

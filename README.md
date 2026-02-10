@@ -8,6 +8,13 @@ A practice application for the Dutch Inburgeringsexamen (A2 level). Practice Rea
 | :------------------------------------------: | :----------------------------------------: | :--------------------------------------: |
 | ![Exam Selection](assets/exam-selection.png) | ![Exam Progress](assets/exam-progress.png) | ![Exam Results](assets/exam-results.png) |
 
+## Table of Contents
+
+- [Setup](#setup)
+- [Running the Application](#running-the-application)
+- [Deployment](#deployment)
+- [Environment Variables](#environment-variables)
+
 ## Setup
 
 ### Prerequisites
@@ -24,7 +31,7 @@ git clone <repository-url>
 cd exam-oefenen
 ```
 
-1. Install dependencies:
+2. Install dependencies:
 
 ```bash
 npm install
@@ -70,7 +77,7 @@ GEMINI_MODEL=gemini-2.5-flash  # Default: gemini-2.5-flash
 
 **Note:** Client-side settings (via UI) will override server-side environment variables.
 
-### Running the Application
+## Running the Application
 
 Start both client and server concurrently:
 
@@ -88,3 +95,94 @@ To stop all services:
 ```bash
 npm run stop
 ```
+
+## Deployment
+
+Ready to deploy your app? We've prepared everything you need!
+
+### 🚀 Quick Deploy
+
+Your app is **production-ready** with Docker and platform configurations. See [DEPLOYMENT-SUMMARY.md](DEPLOYMENT-SUMMARY.md) for a complete overview.
+
+### 📖 Deployment Guides
+
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete step-by-step deployment guide
+- **[DEPLOYMENT-CHECKLIST.md](DEPLOYMENT-CHECKLIST.md)** - Pre-deployment checklist
+- **[DEPLOYMENT-SUMMARY.md](DEPLOYMENT-SUMMARY.md)** - Overview of deployment setup
+
+### 🌐 Supported Platforms (Free Tier Available)
+
+| Platform | Free Tier | Setup Time | Best For |
+|----------|-----------|------------|----------|
+| **[Render](https://render.com)** ⭐ | 750 hrs/mo | 5 min | Beginners |
+| **[Railway](https://railway.app)** | $5 credit/mo | 5 min | Better performance |
+| **[Fly.io](https://fly.io)** | 3 VMs, 160GB | 10 min | Global distribution |
+
+### 🐳 Docker Commands
+
+```bash
+# Build Docker image
+npm run docker:build
+
+# Run Docker container locally
+npm run docker:run
+
+# Build + Run
+npm run docker:dev
+```
+
+Test at `http://localhost:3000` after running.
+
+### 📋 Before Deploying
+
+1. ✅ Get your [Gemini API Key](https://makersuite.google.com/app/apikey)
+2. ✅ Push your code to GitHub/GitLab
+3. ✅ Review [DEPLOYMENT-CHECKLIST.md](DEPLOYMENT-CHECKLIST.md)
+4. ✅ Choose a platform and follow [DEPLOYMENT.md](DEPLOYMENT.md)
+
+**Your app can be live in 10-15 minutes!** 🎉
+
+---
+
+## Project Structure
+
+```
+exam-oefenen/
+├── client/              # Angular frontend
+│   ├── src/
+│   └── package.json
+├── server/              # Express backend
+│   ├── src/
+│   └── package.json
+├── Dockerfile           # Production container
+├── render.yaml          # Render configuration
+├── railway.yaml         # Railway configuration
+├── fly.toml             # Fly.io configuration
+└── package.json         # Root scripts
+```
+
+## Available Scripts
+
+### Development
+- `npm start` - Start dev servers
+- `npm run stop` - Stop dev servers
+
+### Building
+- `npm run build` - Build both client and server
+- `npm run build:client` - Build Angular only
+- `npm run build:server` - Build Express only
+
+### Docker
+- `npm run docker:build` - Build Docker image
+- `npm run docker:run` - Run Docker container
+- `npm run docker:dev` - Build + Run
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For deployment help, see our detailed guides:
+- [DEPLOYMENT.md](DEPLOYMENT.md)
+- [DEPLOYMENT-SUMMARY.md](DEPLOYMENT-SUMMARY.md)

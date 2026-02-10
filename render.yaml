@@ -1,0 +1,37 @@
+# Render deployment configuration
+# Documentation: https://render.com/docs/blueprint-spec
+
+services:
+  # Web service for the full-stack app
+  - type: web
+    name: exam-oefenen
+    runtime: docker
+    plan: free
+    region: frankfurt # Change to your preferred region
+    
+    # Build settings
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    
+    # Environment variables
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: GEMINI_API_KEY
+        sync: false # Set this in Render dashboard
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+    
+    # Health check
+    healthCheckPath: /health
+    
+    # Auto-deploy settings
+    autoDeploy: true
+    
+    # Disk storage (optional, for logs or caching)
+    # disk:
+    #   name: data
+    #   mountPath: /app/data
+    #   sizeGB: 1

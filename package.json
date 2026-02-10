@@ -5,7 +5,13 @@
   "scripts": {
     "start": "concurrently --kill-others-on-fail --kill-others \"cd client && npm run start\" \"cd server && npm run dev\"",
     "stop": "lsof -ti:4400,3000 | xargs kill -9 2>/dev/null || true",
-    "postinstall": "npm install --prefix client && npm install --prefix server"
+    "postinstall": "npm install --prefix client && npm install --prefix server",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "docker:build": "docker build -t exam-oefenen .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env exam-oefenen",
+    "docker:dev": "docker build -t exam-oefenen . && docker run -p 3000:3000 --env-file .env exam-oefenen"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"
