@@ -40,6 +40,9 @@ RUN npm ci --only=production
 # Copy built server from builder
 COPY --from=server-builder /app/server/dist ./dist
 
+# Copy rule files (markdown files are not compiled by TypeScript)
+COPY --from=server-builder /app/server/src/rules ./dist/rules
+
 # Copy built Angular app from builder
 COPY --from=client-builder /app/client/dist/exam-oefenen-client/browser ./public
 

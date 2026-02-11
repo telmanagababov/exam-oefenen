@@ -155,7 +155,7 @@ app.post("/api/exam/:id/validate", async (req, res) => {
 
 // Serve Angular app for all other routes in production
 if (process.env.NODE_ENV === 'production') {
-  app.get('*', (_req, res) => {
+  app.use((_req, res) => {
     const publicPath = resolve(__dirname, '..', 'public');
     res.sendFile(resolve(publicPath, 'index.html'));
   });
