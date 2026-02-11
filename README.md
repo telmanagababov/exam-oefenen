@@ -102,23 +102,6 @@ To stop all services:
 npm run stop
 ```
 
-## Project Structure
-
-```
-exam-oefenen/
-├── client/              # Angular frontend
-│   ├── src/
-│   └── package.json
-├── server/              # Express backend
-│   ├── src/
-│   └── package.json
-├── Dockerfile           # Production container
-├── render.yaml          # Render configuration
-├── railway.yaml         # Railway configuration
-├── fly.toml             # Fly.io configuration
-└── package.json         # Root scripts
-```
-
 ## Available Scripts
 
 ### Development
