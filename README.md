@@ -2,6 +2,12 @@
 
 A practice application for the Dutch Inburgeringsexamen (A2 level). Practice Reading, Listening, Writing, Speaking, and KNM (Knowledge of Dutch Society) exams with AI-powered generation and validation.
 
+## 🌐 Live Demo
+
+Try the live application: **[https://exam-oefenen.onrender.com/](https://exam-oefenen.onrender.com/)**
+
+> **Note:** The app is hosted on Render's free tier and may take 30-60 seconds to wake up on first visit.
+
 ## Preview
 
 |                Exam Selection                |              Exam in Progress              |                 Results                  |
