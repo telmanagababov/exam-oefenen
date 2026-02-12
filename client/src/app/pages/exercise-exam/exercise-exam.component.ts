@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   Injector,
+  OnDestroy,
   OnInit,
   runInInjectionContext,
   signal,
@@ -15,6 +16,7 @@ import { AnswerWritingComponent } from '../../components/answer-writing/answer-w
 import { QuestionListeningComponent } from '../../components/question-listening/question-listening.component';
 import { QuestionReadingComponent } from '../../components/question-reading/question-reading.component';
 import { ExerciseType } from '../../models/exercise-type';
+import { KeepaliveService } from '../../services/keepalive.service';
 import {
   loadExamData,
   selectCurrentAnswer,
@@ -41,9 +43,10 @@ import {
   templateUrl: './exercise-exam.component.html',
   styleUrl: './exercise-exam.component.scss',
 })
-export class ExerciseExamComponent implements OnInit {
+export class ExerciseExamComponent implements OnInit, OnDestroy {
   #store = inject(Store);
   #injector = inject(Injector);
+  #keepalive = inject(KeepaliveService);
 
   ExerciseType = ExerciseType;
 
@@ -58,6 +61,8 @@ export class ExerciseExamComponent implements OnInit {
   #examLoaded = signal<boolean>(false);
 
   ngOnInit(): void {
+    this.#keepalive.start();
+
     runInInjectionContext(this.#injector, () => {
       effect(() => {
         const exerciseType = this.selectedExerciseType();
@@ -67,6 +72,10 @@ export class ExerciseExamComponent implements OnInit {
         }
       });
     });
+  }
+
+  ngOnDestroy(): void {
+    this.#keepalive.stop();
   }
 
   #loadExam(exerciseType: ExerciseType): void {

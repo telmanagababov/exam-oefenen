@@ -34,6 +34,11 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
+// Keepalive endpoint - prevents container spin-down during long exam sessions
+app.get("/api/health/keepalive", (_req, res) => {
+  res.json({ status: "alive", timestamp: Date.now() });
+});
+
 // Config check endpoint - check if server has API key configured
 app.get("/api/config/check", (_req, res) => {
   const hasApiKey = !!process.env.GEMINI_API_KEY;
